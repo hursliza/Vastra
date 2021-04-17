@@ -5,4 +5,6 @@
     <string name="running">Running</string>
     <string name="average_pace_history_details">Avg. pace: %.2f  min/km</string>
     <string name="max_pace_history_details">Max pace: %.2f  min/km</string>
+    <string name="distance">%.2f km</string>
+    <string name="calories">%d kcal</string>
 </resources>
