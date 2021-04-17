@@ -7,4 +7,5 @@
     <string name="max_pace_history_details">Max pace: %.2f  min/km</string>
     <string name="distance">%.2f km</string>
     <string name="calories">%d kcal</string>
+    <string name="current_pace">%.2f min/km</string>
 </resources>
