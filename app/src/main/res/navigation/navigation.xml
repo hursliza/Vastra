@@ -3,22 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/runningFragment">
+    app:startDestination="@id/historyFeedFragment">
+    <fragment
+        android:id="@+id/historyItemDetailsFragment"
+        android:name="com.io.vastra.history.historyItem.HistoryItemDetailsFragment"
+        android:label="HistoryItemDetailsFragment" >
+        <action
+            android:id="@+id/toHistoryFeed"
+            app:destination="@id/historyFeedFragment" />
+    </fragment>
 
     <fragment
-        android:id="@+id/runningFragment"
-        android:name="com.io.vastra.running.RunningFragment"
-        android:label="Running" >
-        <action
-            android:id="@+id/action_runningFragment_to_historyFragment"
-            app:destination="@id/historyFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/historyFragment"
-        android:name="com.io.vastra.history.HistoryFragment"
-        android:label="History" >
-        <action
-            android:id="@+id/action_historyFragment_to_runningFragment"
-            app:destination="@id/runningFragment" />
+        android:id="@+id/historyFeedFragment"
+        android:name="com.io.vastra.history.HistoryFeedFragment"
+        android:label="HistoryFeedFragment">
+        <argument
+            android:name="workoutDate"
+            android:defaultValue="Thu May 12 00:00:00 GMT"/>
+        <action tools:ignore="ExtraText"
+            android:id="@+id/toDetails"
+            app:destination="@id/historyItemDetailsFragment" />
     </fragment>
 </navigation>

@@ -3,4 +3,6 @@
     <string name="award_description">Award description</string>
     <string name="history">History</string>
     <string name="running">Running</string>
+    <string name="average_pace_history_details">Avg. pace: %.2f  min/km</string>
+    <string name="max_pace_history_details">Max pace: %.2f  min/km</string>
 </resources>

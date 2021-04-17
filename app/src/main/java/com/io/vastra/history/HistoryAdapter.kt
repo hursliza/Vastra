@@ -1,9 +1,13 @@
 package com.io.vastra.history
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.os.bundleOf
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.io.vastra.R
 import com.io.vastra.data.Award
@@ -30,11 +34,18 @@ class HistoryAdapter(var dataSet: Array<HistoryItem>): RecyclerView.Adapter<Hist
         return ViewHolder(view)
     }
 
-    @ExperimentalTime
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.date.text = dataSet[position].date.toString()
         holder.duration.text = dataSet[position].duration.toString()
         holder.distance.text = dataSet[position].distance
+
+        holder.itemView.setOnClickListener(object: View.OnClickListener{
+            override fun onClick(v: View?) {
+                val bundle = bundleOf("workoutDate" to dataSet[position].date.toString())
+                val navController = Navigation.findNavController(holder.itemView)
+                navController.navigate(R.id.toDetails, bundle)
+            }
+        })
     }
 
     override fun getItemCount() = dataSet.size
