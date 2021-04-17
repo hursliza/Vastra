@@ -24,26 +24,39 @@
                 android:src="@color/colorAccentLight"
                 />
 
-            <ImageView
-                android:id="@+id/award_icon"
+            <TextView
+                android:id="@+id/history_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="01-01-2021"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_margin="24dp"
-                android:src="@drawable/award"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginVertical="8dp"
                 />
 
             <TextView
-                android:id="@+id/award_description"
+                android:id="@+id/history_distance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/award_description"
-                app:layout_constraintTop_toTopOf="parent"
+                android:text="14.28 km"
+                android:layout_marginHorizontal="16dp"
+                android:textColor="@android:color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/history_duration"
+                />
+
+            <TextView
+                android:id="@+id/history_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1:45:23"
+                android:fontFamily="sans-serif-medium"
+                android:layout_margin="16dp"
+                android:textSize="24dp"
+                android:textColor="@android:color/black"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/award_icon"
-                android:layout_marginHorizontal="36dp"
                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
