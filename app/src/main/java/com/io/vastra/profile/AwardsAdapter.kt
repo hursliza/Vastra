@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.io.vastra.R
-import com.io.vastra.data.Award
+import com.io.vastra.data.models.Award
 
-class AwardsAdapter(var dataSet: Array<Award>): RecyclerView.Adapter<AwardsAdapter.ViewHolder>() {
+class AwardsAdapter(var dataSet: Array<Award> = arrayOf()): RecyclerView.Adapter<AwardsAdapter.ViewHolder>() {
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val description: TextView
 

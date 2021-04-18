@@ -36,9 +36,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".profile.ProfileActivity"
-            android:parentActivityName=".MainActivity" />
+
     </application>
 
 </manifest>

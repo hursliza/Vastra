@@ -5,35 +5,48 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
+import androidx.lifecycle.observe
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.io.vastra.data.datasource.UserDataSource
+import com.io.vastra.data.datasource.UserDataSourceProvider
 import com.io.vastra.history.HistoryFragment
 import com.io.vastra.profile.ProfileActivity
 import com.io.vastra.running.RunningFragment
+
+val DEFAULT_USER_ID = "987654321";
 
 class MainActivity : AppCompatActivity() {
     internal lateinit var profileButton: ImageButton
     internal lateinit var tabs: TabLayout
     internal lateinit var viewPager: ViewPager2
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.toolbar))
+
         supportActionBar?.setDisplayShowTitleEnabled(false)
         profileButton = findViewById(R.id.profile_button)
         profileButton.setOnClickListener(profileButtonListener())
 
-        tabs = findViewById(R.id.Tabs)
-        viewPager = findViewById(R.id.viewpager)
+        setCurrentUser();
+        configureTabLayout();
 
+    }
+
+
+    private fun configureTabLayout() {
         val fragments = arrayListOf(HistoryFragment(), RunningFragment())
 
+        viewPager = findViewById(R.id.viewpager)
         viewPager.adapter = ViewPagerAdapter(fragments, supportFragmentManager, lifecycle)
 
-        tabs.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener{
+        tabs = findViewById(R.id.Tabs)
+        tabs.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
+
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 viewPager.currentItem = tabs.selectedTabPosition
             }
@@ -43,7 +56,6 @@ class MainActivity : AppCompatActivity() {
 
             override fun onTabReselected(tab: TabLayout.Tab?) {
             }
-
         })
 
         TabLayoutMediator(tabs, viewPager) { tab, position ->
@@ -57,10 +69,12 @@ class MainActivity : AppCompatActivity() {
             }
 
         }.attach()
-
-
-
     }
+
+    private fun setCurrentUser() {
+        UserDataSourceProvider.instantiate(DEFAULT_USER_ID);
+    }
+
 
     private fun profileButtonListener(): View.OnClickListener? {
         return View.OnClickListener {

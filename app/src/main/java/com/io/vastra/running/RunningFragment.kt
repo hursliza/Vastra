@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import com.io.vastra.R
 
 class RunningFragment: Fragment() {
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

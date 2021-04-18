@@ -8,10 +8,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.addCallback
-import androidx.navigation.Navigation
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.io.vastra.R
+
 class HistoryItemDetailsFragment : Fragment() {
+
+    private val viewModel: HistoryItemViewModel by viewModels() {
+        val idx = arguments?.getInt(HistoryDetailsStatisticsArgs.RunIdx.name)
+            ?: throw InstantiationError("Cannot create details when run index is not provided");
+        HistoryItemViewModelFactory(viewLifecycleOwner, idx);
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,5 +39,6 @@ class HistoryItemDetailsFragment : Fragment() {
 
         return view
     }
+
 
 }
