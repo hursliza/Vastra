@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
         profileButton = findViewById(R.id.profile_button)
         profileButton.setOnClickListener(profileButtonListener())
+
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token))
 
         setCurrentUser();

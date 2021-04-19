@@ -24,24 +24,29 @@ class MapFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        var mainView = inflater.inflate(R.layout.fragment_map, container, false)
+        val mainView = inflater.inflate(R.layout.fragment_map, container, false)
 
         mapView = mainView.findViewById(R.id.mapView)
         mapView.onCreate(savedInstanceState)
 
-
         mapView.getMapAsync { mapboxMap ->
             mapboxMap.setStyle(Style.MAPBOX_STREETS)
+            val actualPosition = getLastLocation(mainView)
             val cameraPosition: CameraPosition = CameraPosition.Builder()
-                .target(LOCATION) // set the camera's center position
+                .target(actualPosition) // set the camera's center position
                 .zoom(15.0) // set the camera's zoom level
                 .tilt(10.0) // set the camera's tilt
                 .build()
 
+//            TODO("Update camera view after significant position change")
             // Move the camera to that position
             mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
         }
         return mainView
+    }
+
+    private fun getLastLocation(mainView: View): LatLng {
+//        TODO("Get last location from the RunDescription's list of location points")
+        return LOCATION
     }
 }
