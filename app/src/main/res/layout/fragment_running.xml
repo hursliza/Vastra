@@ -18,7 +18,7 @@
 
         <fragment
             android:id="@+id/running_details"
-            android:name="com.io.vastra.running.DetailsFragment"
+            android:name="com.io.vastra.running.details_fragment.DetailsFragment"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:elevation="4dp"

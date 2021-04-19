@@ -1,18 +1,16 @@
 package com.io.vastra.history
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.os.bundleOf
-import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.io.vastra.R
-import com.io.vastra.data.Award
-import com.io.vastra.data.HistoryItem
-import kotlin.time.ExperimentalTime
+import com.io.vastra.data.models.HistoryItem
+import com.io.vastra.history.historyItem.HistoryDetailsStatisticsArgs
+
 
 class HistoryAdapter(var dataSet: Array<HistoryItem>): RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
@@ -41,7 +39,7 @@ class HistoryAdapter(var dataSet: Array<HistoryItem>): RecyclerView.Adapter<Hist
 
         holder.itemView.setOnClickListener(object: View.OnClickListener{
             override fun onClick(v: View?) {
-                val bundle = bundleOf("workoutDate" to dataSet[position].date.toString())
+                val bundle = bundleOf(HistoryDetailsStatisticsArgs.RunIdx.name to position.toString())
                 val navController = Navigation.findNavController(holder.itemView)
                 navController.navigate(R.id.toDetails, bundle)
             }

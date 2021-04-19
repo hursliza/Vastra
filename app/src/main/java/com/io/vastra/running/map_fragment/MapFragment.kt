@@ -1,4 +1,4 @@
-package com.io.vastra.running
+package com.io.vastra.running.map_fragment
 
 import androidx.fragment.app.Fragment
 
