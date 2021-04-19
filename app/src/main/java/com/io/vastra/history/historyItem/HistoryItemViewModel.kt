@@ -12,11 +12,10 @@ class HistoryItemViewModel(owner: LifecycleOwner, clickedIdx: Int): ViewModel() 
     get() = _runDescription;
 
     init {
-        UserDataSourceProvider.instance.getDataSource().currentUser.observe(owner){
-            _runDescription.value = it.runHistory?.get(clickedIdx);
+        UserDataSourceProvider.instance.getDataSource().currentUser.observe(owner) {
+            _runDescription.value = it.runHistory?.values?.toList()?.get(clickedIdx);
         }
     }
-
 }
 
 class HistoryItemViewModelFactory(private val owner: LifecycleOwner, private val clickedIdx: Int = 0): ViewModelProvider.Factory {

@@ -18,14 +18,18 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.io.vastra.R
 import com.io.vastra.data.datasource.UserDataSourceProvider
 import com.io.vastra.data.entities.RunDescription
+import com.io.vastra.utils.toVastraTimeString
 import java.math.BigDecimal
 import java.math.RoundingMode
+import kotlin.time.ExperimentalTime
+import kotlin.time.seconds
 
 
 enum class HistoryDetailsStatisticsArgs {
     RunIdx
 }
 
+@ExperimentalTime
 class HistoryItemDetailsStatisticsFragment : Fragment() {
     internal lateinit var chart: BarChart;
     internal lateinit var time: TextView;
@@ -48,17 +52,19 @@ class HistoryItemDetailsStatisticsFragment : Fragment() {
             container,
             false
         )
-
-        chart = view.findViewById(R.id.pace_chart)
-        time = view.findViewById(R.id.history_workout_time)
-        distance = view.findViewById(R.id.history_workout_distance)
-        avgPace = view.findViewById(R.id.history_workout_avg_pace)
-        maxPace = view.findViewById(R.id.history_workout_max_pace)
-
+        bindViews(view);
         configureDataSource();
         return view
     }
 
+    private fun bindViews(mainView: View) {
+        chart = mainView.findViewById(R.id.pace_chart)
+        time = mainView.findViewById(R.id.history_workout_time)
+        distance = mainView.findViewById(R.id.history_workout_distance)
+        calories = mainView.findViewById(R.id.history_workout_calories);
+        avgPace = mainView.findViewById(R.id.history_workout_avg_pace)
+        maxPace = mainView.findViewById(R.id.history_workout_max_pace)
+    }
 
     private fun configureDataSource() {
         viewModel.runDescription.observe(viewLifecycleOwner) {
@@ -70,17 +76,19 @@ class HistoryItemDetailsStatisticsFragment : Fragment() {
         val runIdx =  arguments?.getInt(HistoryDetailsStatisticsArgs.RunIdx.name) ?: defaultIdx;
         if (runIdx != defaultIdx) {
             UserDataSourceProvider.instance.getDataSource().currentUser.observe(viewLifecycleOwner) {
-                it.runHistory?.get(runIdx)?.let { item -> updateView(item) };
+                it.runHistory?.values?.toList()?.get(runIdx)?.let { item -> updateView(item) };
             }
         }
     }
 
 
+    @ExperimentalTime
     fun updateView(description: RunDescription) {
         distance.text = getString(R.string.distance, description.distance);
         avgPace.text = getString(R.string.average_pace_history_details, description.pacePerKm.average());
         maxPace.text = getString(R.string.max_pace_history_details, description.pacePerKm.maxOrNull() ?: 0f);
-        time.text = description.runDuration.toString(); // TODO convert seconds to hours
+        val runDuration = (description.runDuration ?: 0).seconds;
+        time.text =  runDuration.toVastraTimeString();
         calories.text = getString(R.string.calories, 875) //TODO count calories
         val data: BarData = createChartData(description.pacePerKm);
         configureChartAppearance();
@@ -88,12 +96,12 @@ class HistoryItemDetailsStatisticsFragment : Fragment() {
     }
 
 
-    private fun createChartData(data: List<Float>): BarData {
+    private fun createChartData(data: List<Double>): BarData {
         val values: ArrayList<BarEntry> = ArrayList()
 
         for (i in 0 until data.size) {
             val x = i.toFloat()
-            val y = data[i]
+            val y = data[i].toFloat()
             values.add(BarEntry(x, y))
         }
 

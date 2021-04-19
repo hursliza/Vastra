@@ -13,17 +13,33 @@ import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
+import com.google.android.gms.location.LocationRequest
 import com.io.vastra.R
+import com.io.vastra.data.entities.RoutePoint
+import com.io.vastra.running.RunViewModelState
+import com.io.vastra.running.RunningViewModel
+import com.io.vastra.running.RunningViewModelFactory
+import com.io.vastra.running.WorkoutStatistics
+import com.io.vastra.utils.toVastraTimeString
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 class DetailsFragment : Fragment() {
-    private lateinit var runTime: TextView
-    private lateinit var distance: TextView
-    private lateinit var averagePace: TextView
 
-    internal lateinit var fusedLocationClient: FusedLocationProviderClient
-    internal lateinit var locationCallback: LocationCallback
+    private lateinit var runTime: TextView;
+    private lateinit var distance: TextView;
+    private lateinit var averagePace: TextView;
+    private lateinit var calories: TextView;
+    private var state: RunViewModelState  = RunViewModelState.InActive;
 
-    internal lateinit var startRunButton: FloatingActionButton
+    internal lateinit var fusedLocationClient: FusedLocationProviderClient;
+    internal lateinit var locationCallback: LocationCallback;
+
+    private val viewModel: RunningViewModel by viewModels({requireParentFragment()}) {
+        RunningViewModelFactory();
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,23 +52,38 @@ class DetailsFragment : Fragment() {
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(p0: LocationResult) {
                 for (location in p0.locations) {
-                    updateBreakpoints(location)
-                    updateDetailsView()
+                    updateBreakpoints(location);
                 }
             }
         }
-        startLocation(mainView)
-        return mainView
+
+        configureSubscriptions();
+        startLocation(mainView);
+        return mainView;
+    }
+
+    private fun configureSubscriptions() {
+        viewModel.runDuration.observe(viewLifecycleOwner) {
+            runTime.text = it.toVastraTimeString();
+        }
+        viewModel.state.observe(viewLifecycleOwner) {
+            state = it;
+        }
+        viewModel.workoutStatistics.observe(viewLifecycleOwner) {
+            updateView(it);
+        }
     }
 
     private fun bindViews(mainView: View) {
-        runTime = mainView.findViewById(R.id.time)
-        distance = mainView.findViewById(R.id.distance)
-        averagePace = mainView.findViewById(R.id.average_pace);
-
-        startRunButton = mainView.findViewById(R.id.floatingActionButton)
-        startRunButton.setOnClickListener { startRun() }
+        runTime = mainView.findViewById(R.id.time);
+        distance = mainView.findViewById(R.id.distance);
+        averagePace = mainView.findViewById(R.id.average_pace);    
+        mainView.findViewById<FloatingActionButton>(R.id.floating_action_button).setOnClickListener {
+            toggleRunState()
+        };
+        calories = mainView.findViewById(R.id.calories);
     }
+
 
     private fun startLocation(mainView: View) {
         val locationRequest = LocationRequest.create()
@@ -81,20 +112,22 @@ class DetailsFragment : Fragment() {
         )
     }
 
-    private fun startRun() {
-//        TODO("Change FAB functionality")
-    }
 
     private fun updateBreakpoints(location: Location) {
-//        TODO(
-//            "Remove println and replace it by " +
-//                    "addBreakpoint(RoutePoint(location.latitude, location.longitude))"
-//        )
-        println(location.toString())
+        viewModel.addRoutePoint(RoutePoint(location.latitude, location.longitude));
     }
 
-    private fun updateDetailsView() {
-//        TODO("Update details info")
+    
+    private fun updateView(workoutStatistics: WorkoutStatistics) {
+        distance.text = getString(R.string.distance, workoutStatistics.distance);
+        averagePace.text = getString(R.string.average_pace_history_details, workoutStatistics.avgPace);
+        calories.text = getString(R.string.calories, workoutStatistics.calories);
     }
 
+    fun toggleRunState() {
+        when (state) {
+            RunViewModelState.InActive -> viewModel.startRun();
+            RunViewModelState.Active -> viewModel.endRun();
+        }
+    }
 }
