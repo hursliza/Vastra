@@ -26,10 +26,7 @@ class ProfileActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_profile)
-        setSupportActionBar(findViewById(R.id.toolbar))
-
-        supportActionBar?.setHomeButtonEnabled(true)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setSupportActionBar(findViewById(R.id.toolbar));
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         rv = findViewById(R.id.awards_rv)
@@ -47,6 +44,11 @@ class ProfileActivity: AppCompatActivity() {
         val profile_button: ImageButton = findViewById(R.id.profile_button)
         profile_button.visibility = GONE
 
+
+        configureViewModel();
+    }
+
+    fun configureViewModel() {
         val factory = ProfileViewModelFactory(this, DEFAULT_USER_ID);
         viewModel = ViewModelProvider(this, factory).get(ProfileViewModel::class.java);
         viewModel.userAwards.observe(this) {
@@ -54,8 +56,8 @@ class ProfileActivity: AppCompatActivity() {
             adapter.notifyDataSetChanged();
         }
 
-
     }
+
 
 
 }
