@@ -6,15 +6,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorAccentLight">
 
-        <TextView
+<!--        <TextView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            android:layout_margin="36dp"-->
+<!--            android:text="MAP FRAGMENT HERE"-->
+<!--                />-->
+
+        <fragment
+            android:id="@+id/running_map"
+            android:name="com.io.vastra.running.map_fragment.MapFragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_margin="36dp"
-            android:text="MAP FRAGMENT HERE"
-                />
+            android:elevation="4dp"
+            android:fadingEdge="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+
+            tools:layout="@layout/fragment_map" />
 
         <fragment
             android:id="@+id/running_details"
