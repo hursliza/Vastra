@@ -92,6 +92,10 @@ class RunningViewModel : ViewModel() {
         recalculateStatistics(_runBreakpoints);
     }
 
+    fun updateCurentLocation(actualBreakpoint: RoutePoint) {
+        _currentLocation.postValue(actualBreakpoint);
+    }
+
     private fun recalculateStatistics(runBreakpoints: List<RunBreakpoint>) {
         val avgPaces = calculatePacePerKm(runBreakpoints);
         val calories = calculateCalories(runBreakpoints, runDuration.value);
@@ -129,7 +133,10 @@ class RunningViewModel : ViewModel() {
     private fun getRoute(runBreakpoints: List<RunBreakpoint>): List<RoutePoint> =
         runBreakpoints.map { breakPoint -> breakPoint.point }.filterNotNull();
 
-    private fun calculateCalories(runBreakpoints: List<RunBreakpoint>, runDuration: Duration?): Int {
+    private fun calculateCalories(
+        runBreakpoints: List<RunBreakpoint>,
+        runDuration: Duration?
+    ): Int {
         val distance = calculateDistance(runBreakpoints)
         if (runDuration != null) {
             val velocity = distance / runDuration.inHours

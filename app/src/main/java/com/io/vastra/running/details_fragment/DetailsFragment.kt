@@ -40,10 +40,11 @@ class DetailsFragment : Fragment() {
     internal lateinit var fusedLocationClient: FusedLocationProviderClient;
     internal lateinit var locationCallback: LocationCallback;
 
-    private val viewModel: RunningViewModel by viewModels({requireParentFragment()}) {
+    private val viewModel: RunningViewModel by viewModels({ requireParentFragment() }) {
         RunningViewModelFactory();
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -81,10 +82,11 @@ class DetailsFragment : Fragment() {
     private fun bindViews(mainView: View) {
         runTime = mainView.findViewById(R.id.time);
         distance = mainView.findViewById(R.id.distance);
-        averagePace = mainView.findViewById(R.id.average_pace);    
-        mainView.findViewById<FloatingActionButton>(R.id.floating_action_button).setOnClickListener {
-            toggleRunState()
-        };
+        averagePace = mainView.findViewById(R.id.average_pace);
+        mainView.findViewById<FloatingActionButton>(R.id.floating_action_button)
+            .setOnClickListener {
+                toggleRunState()
+            };
         calories = mainView.findViewById(R.id.calories);
     }
 
@@ -118,13 +120,21 @@ class DetailsFragment : Fragment() {
 
 
     private fun updateBreakpoints(location: Location) {
-        viewModel.addRoutePoint(RoutePoint(location.latitude, location.longitude));
+        val routePoint = RoutePoint(
+            location.latitude,
+            location.longitude
+        )
+        when (state) {
+            RunViewModelState.InActive -> viewModel.updateCurentLocation(routePoint)
+            RunViewModelState.Active -> viewModel.addRoutePoint(routePoint)
+        }
     }
 
-    
+
     private fun updateView(workoutStatistics: WorkoutStatistics) {
         distance.text = workoutStatistics.distance.toVastraDistanceString();
-        averagePace.text = getString(R.string.average_pace_history_details, workoutStatistics.avgPace);
+        averagePace.text =
+            getString(R.string.average_pace_history_details, workoutStatistics.avgPace);
         calories.text = getString(R.string.calories, workoutStatistics.calories);
     }
 
