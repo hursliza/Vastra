@@ -9,9 +9,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 
 import com.io.vastra.R
-import com.io.vastra.data.entities.RoutePoint
-import com.io.vastra.running.RunningViewModel
-import com.io.vastra.running.RunningViewModelFactory
+import com.io.vastra.running.running_view_model.RunningViewModel
+import com.io.vastra.running.running_view_model.RunningViewModelFactory
 import kotlin.time.ExperimentalTime
 
 import com.mapbox.mapboxsdk.camera.CameraPosition

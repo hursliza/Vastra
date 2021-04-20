@@ -3,6 +3,7 @@ package com.io.vastra.running.details_fragment
 import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import androidx.fragment.app.Fragment
@@ -10,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -18,10 +20,11 @@ import androidx.lifecycle.observe
 import com.google.android.gms.location.LocationRequest
 import com.io.vastra.R
 import com.io.vastra.data.entities.RoutePoint
-import com.io.vastra.running.RunViewModelState
-import com.io.vastra.running.RunningViewModel
-import com.io.vastra.running.RunningViewModelFactory
-import com.io.vastra.running.WorkoutStatistics
+import com.io.vastra.running.running_view_model.RunViewModelState
+import com.io.vastra.running.running_view_model.RunningViewModel
+import com.io.vastra.running.running_view_model.RunningViewModelFactory
+import com.io.vastra.running.running_view_model.WorkoutStatistics
+import com.io.vastra.utils.toVastraDistanceString
 import com.io.vastra.utils.toVastraTimeString
 import kotlin.time.ExperimentalTime
 
@@ -32,7 +35,7 @@ class DetailsFragment : Fragment() {
     private lateinit var distance: TextView;
     private lateinit var averagePace: TextView;
     private lateinit var calories: TextView;
-    private var state: RunViewModelState  = RunViewModelState.InActive;
+    private var state: RunViewModelState = RunViewModelState.InActive;
 
     internal lateinit var fusedLocationClient: FusedLocationProviderClient;
     internal lateinit var locationCallback: LocationCallback;
@@ -74,6 +77,7 @@ class DetailsFragment : Fragment() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun bindViews(mainView: View) {
         runTime = mainView.findViewById(R.id.time);
         distance = mainView.findViewById(R.id.distance);
@@ -119,11 +123,12 @@ class DetailsFragment : Fragment() {
 
     
     private fun updateView(workoutStatistics: WorkoutStatistics) {
-        distance.text = getString(R.string.distance, workoutStatistics.distance);
+        distance.text = workoutStatistics.distance.toVastraDistanceString();
         averagePace.text = getString(R.string.average_pace_history_details, workoutStatistics.avgPace);
         calories.text = getString(R.string.calories, workoutStatistics.calories);
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun toggleRunState() {
         when (state) {
             RunViewModelState.InActive -> viewModel.startRun();

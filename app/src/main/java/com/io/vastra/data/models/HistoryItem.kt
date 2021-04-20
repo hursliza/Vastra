@@ -6,5 +6,5 @@ import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
-data class HistoryItem constructor(val duration: Duration, val distance: String, val date: Date) {
+data class HistoryItem constructor(val duration: Duration, val distance: Int, val date: Date) {
 }

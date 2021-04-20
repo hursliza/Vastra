@@ -1,6 +1,22 @@
 package com.io.vastra.data.entities
 
-class RoutePoint(f: Double = 0.0, s: Double = 0.0) {
-    var first: Double = f;
-    var second: Double = s;
+import android.location.Location
+
+class RoutePoint(var lat: Double = 0.0, var long: Double = 0.0) {
+    /**
+     * Returns distance in meters
+     * */
+    fun distanceTo(other: RoutePoint): Int {
+        val location1 = Location("locationA").also {
+            it.latitude = lat;
+            it.longitude = long
+        };
+        val location2 = Location("locationB").also {
+            it.latitude = other.lat;
+            it.longitude = other.long
+        }
+        return location1.distanceTo(location2).toInt();
+    }
+
+
 }

@@ -10,7 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.io.vastra.R
 import com.io.vastra.data.models.HistoryItem
 import com.io.vastra.history.historyItem.HistoryDetailsStatisticsArgs
+import com.io.vastra.utils.toVastraDistanceString
 import com.io.vastra.utils.toVastraTimeString
+import java.text.SimpleDateFormat
 import kotlin.time.ExperimentalTime
 
 
@@ -36,9 +38,9 @@ class HistoryAdapter(var dataSet: Array<HistoryItem>): RecyclerView.Adapter<Hist
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.date.text = dataSet[position].date.toString()
+        holder.date.text = SimpleDateFormat("yyyy-MM-dd").format(dataSet[position].date)
         holder.duration.text = dataSet[position].duration.toVastraTimeString();
-        holder.distance.text = dataSet[position].distance
+        holder.distance.text = dataSet[position].distance.toVastraDistanceString()
 
         holder.itemView.setOnClickListener(object: View.OnClickListener{
             override fun onClick(v: View?) {
@@ -51,3 +53,4 @@ class HistoryAdapter(var dataSet: Array<HistoryItem>): RecyclerView.Adapter<Hist
 
     override fun getItemCount() = dataSet.size
 }
+

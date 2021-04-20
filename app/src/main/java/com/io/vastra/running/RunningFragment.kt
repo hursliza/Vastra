@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.io.vastra.R
+import com.io.vastra.running.running_view_model.RunningViewModel
+import com.io.vastra.running.running_view_model.RunningViewModelFactory
 import kotlin.time.ExperimentalTime
 
 @ExperimentalTime
