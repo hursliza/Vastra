@@ -79,7 +79,7 @@ class RunningViewModel : ViewModel() {
     fun addRoutePoint(newBreakpoint: RoutePoint) {
         val previousBreakpoint = _runBreakpoints.last()
         val distance = newBreakpoint.distanceTo(previousBreakpoint.point ?: newBreakpoint);
-        val duration = (runDuration.value ?: ZERO).minus(previousBreakpoint.duration);
+        val duration = previousBreakpoint.duration?.let { (runDuration.value ?: ZERO).minus(it) };
         _runBreakpoints.add(
             RunBreakpoint(
                 distance = distance,
@@ -102,7 +102,7 @@ class RunningViewModel : ViewModel() {
         val distance = calculateDistance(runBreakpoints);
         _workoutStatistics.postValue(
             WorkoutStatistics(
-                avgPace = 0.0, //avgPaces.last(),
+                avgPace = avgPaces.lastOrNull() ?: 0.0,
                 calories = calories,
                 distance = distance
             )
@@ -155,10 +155,11 @@ class RunningViewModel : ViewModel() {
     private fun calculateDistance(runBreakpoints: List<RunBreakpoint>) =
         runBreakpoints.sumBy { it.distance }
 
-    private fun calculatePacePerKm(runBreakpoints: List<RunBreakpoint>): List<Double> =
-        runBreakpoints.groupByKm().map { 0.0 }
-//        it.distance.toDouble() / it.duration.inSeconds.toInt() };
-
+    private fun calculatePacePerKm(runBreakpoints: List<RunBreakpoint>): List<Double>
+    {
+        val grouped = runBreakpoints.groupByKm().filter { it.duration != null }
+        return grouped.map { it.distance.toDouble() / it.duration!!.inSeconds.toInt() }
+    };
     private fun cleanRunBreakouts() {
         _runBreakpoints.clear()
         _runBreakpoints.add(RunBreakpoint.empty)

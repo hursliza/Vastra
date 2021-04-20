@@ -6,24 +6,24 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
 @ExperimentalTime
-data class RunBreakpoint(var point: RoutePoint? = null, var duration: Duration, var distance: Int) {
+data class RunBreakpoint(var point: RoutePoint? = null, var duration: Duration? = null, var distance: Int) {
     companion object {
         val empty
-        get() = RunBreakpoint(
-            duration=0.0.seconds,
-            distance = 0);
+        get() = RunBreakpoint(distance = 0);
     }
 };
 
 @ExperimentalTime
-fun List<RunBreakpoint>.groupByKm() = this.fold(listOf(
+fun Collection<RunBreakpoint>.groupByKm() = this.fold(listOf(
     RunBreakpoint.empty
 )) {
         acc, runBreakpoint ->
     val lastKmBreakpoint = acc.last();
     if (lastKmBreakpoint.distance < METERS_IN_KILOMETR) {
         lastKmBreakpoint.distance += runBreakpoint.distance;
-        lastKmBreakpoint.duration += runBreakpoint.duration;
+        runBreakpoint.duration?.let {
+            lastKmBreakpoint.duration = lastKmBreakpoint.duration ?: Duration.ZERO + it;
+        }
         return acc;
     }
     return acc + RunBreakpoint.empty;

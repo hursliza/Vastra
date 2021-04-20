@@ -8,9 +8,12 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import com.io.vastra.award.AwardConstraint
+import com.io.vastra.award.RunMoreThanNTimesAward
+import com.io.vastra.data.entities.AwardDetails
 import com.io.vastra.data.entities.RunDescription
 import com.io.vastra.data.entities.UserDetails
-import kotlin.time.ExperimentalTime
+import com.io.vastra.data.models.Award
 
 
 class UserDataSource(val userId: String) {
@@ -45,9 +48,35 @@ class UserDataSource(val userId: String) {
         val listRef = Firebase.database.getReference("${userId}/${UserDetails::runHistory.name}");
         val newNode = listRef.push();
         newNode.setValue(runDescription);
+        userLiveData.value?.let {
+            val receivedAwards = getRecevideAwards(it);
+            if (receivedAwards.count() != 0) {
+                addAwardsToUser(receivedAwards);
+            }
+        }
     }
 
-    private fun checkIfRewardReceived(userDescription: UserDetails) {
-        // TODO: implement
+    private fun addAwardsToUser(receivedAwards: Collection<AwardDetails>) {
+        val listRef = Firebase.database.getReference("${userId}/${UserDetails::userAwards.name}");
+        receivedAwards.forEach {
+            val newNode = listRef.push();
+            newNode.setValue(it);
+        }
+    }
+
+    private val implementedAwards: List<AwardConstraint> = listOf(
+        RunMoreThanNTimesAward(1),
+        RunMoreThanNTimesAward(10)
+    )
+    private fun getRecevideAwards(userDescription: UserDetails): Collection<AwardDetails> {
+        val awardsToReceive = implementedAwards.filter { cnst -> userDescription.userAwards.values.find {
+                it.id == cnst.id
+            } == null
+        }
+        val completedConstraints = awardsToReceive.filter {  it.isCompleted(userDescription.runHistory?.values ?: listOf()) }
+        return completedConstraints.map { AwardDetails().also{ aw ->
+            aw.description = it.description
+            aw.id = it.id
+        }}
     };
 }
