@@ -91,7 +91,7 @@ class DetailsFragment : Fragment() {
 
     private fun startLocation(mainView: View) {
         val locationRequest = LocationRequest.create()
-        locationRequest.interval = 5000
+        locationRequest.interval = 1000
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         if (ActivityCompat.checkSelfPermission(
                 mainView.context,
