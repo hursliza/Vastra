@@ -23,7 +23,7 @@ enum class RunViewModelState {
 }
 
 @ExperimentalTime
-class RunningViewModel: ViewModel() {
+class RunningViewModel : ViewModel() {
     // region Observalbes
     private val _runDuration: MutableLiveData<Duration> = MutableLiveData(ZERO);
     val runDuration: LiveData<Duration>
@@ -31,28 +31,31 @@ class RunningViewModel: ViewModel() {
 
 
     private val _workoutStatistics: MutableLiveData<WorkoutStatistics> = MutableLiveData(
-WorkoutStatistics.empty
+        WorkoutStatistics.empty
     );
     val workoutStatistics: LiveData<WorkoutStatistics>
-    get() = _workoutStatistics;
+        get() = _workoutStatistics;
 
 
     private var _state: MutableLiveData<RunViewModelState> = MutableLiveData(
         RunViewModelState.InActive
     );
     val state: LiveData<RunViewModelState>
-    get() = _state;
+        get() = _state;
 
 
-    private val _currentLocation:  MutableLiveData<RoutePoint> = MutableLiveData();
+    private val _currentLocation: MutableLiveData<RoutePoint> = MutableLiveData();
     val currentLocation: LiveData<RoutePoint>
-    get() = _currentLocation;
+        get() = _currentLocation;
+
+    private val _runBreakpoints: MutableList<RunBreakpoint> = mutableListOf(RunBreakpoint.empty);
+    val runBreakpoints: MutableList<RunBreakpoint>
+        get() = _runBreakpoints
     //endregion
 
 
     //region Members
     private var _timer: Timer? = null;
-    private val runBreakpoints: MutableList<RunBreakpoint> = mutableListOf(RunBreakpoint.empty);
     //endregion
 
     fun startRun() {
@@ -63,20 +66,21 @@ WorkoutStatistics.empty
     private fun startTimer() {
         val timerPeriod = 100L;
         val milisecondsInSecond = 100;
-        _timer = timer(name = "run timer", daemon = true,
+        _timer = timer(
+            name = "run timer", daemon = true,
             initialDelay = 0,
             period = timerPeriod
-            ) {
+        ) {
             val previousDuration = _runDuration.value?.inSeconds ?: 0.toDouble();
-            _runDuration.postValue(( previousDuration + timerPeriod / milisecondsInSecond).seconds);
+            _runDuration.postValue((previousDuration + timerPeriod / milisecondsInSecond).seconds);
         }
     }
 
     fun addRoutePoint(newBreakpoint: RoutePoint) {
-        val previousBreakpoint = runBreakpoints.last();
+        val previousBreakpoint = _runBreakpoints.last();
         val distance = newBreakpoint.distanceTo(previousBreakpoint.point ?: newBreakpoint);
         val duration = (runDuration.value ?: ZERO).minus(previousBreakpoint.duration);
-        runBreakpoints.add(
+        _runBreakpoints.add(
             RunBreakpoint(
                 distance = distance,
                 duration = duration,
@@ -85,7 +89,7 @@ WorkoutStatistics.empty
         );
 
         _currentLocation.postValue(newBreakpoint);
-        recalculateStatistics(runBreakpoints);
+        recalculateStatistics(_runBreakpoints);
     }
 
     private fun recalculateStatistics(runBreakpoints: List<RunBreakpoint>) {
@@ -111,33 +115,33 @@ WorkoutStatistics.empty
     @RequiresApi(Build.VERSION_CODES.O)
     private fun saveUserRun() {
         val runDescription = RunDescription().also {
-            it.route = getRoute(runBreakpoints);
+            it.route = getRoute(_runBreakpoints);
             it.runDuration = runDuration.value?.toLong(DurationUnit.SECONDS);
-            it.calories = calculateCalories(runBreakpoints);
-            it.distance =  calculateDistance(runBreakpoints);
-            it.pacePerKm = calculatePacePerKm(runBreakpoints);
+            it.calories = calculateCalories(_runBreakpoints);
+            it.distance = calculateDistance(_runBreakpoints);
+            it.pacePerKm = calculatePacePerKm(_runBreakpoints);
             it.runEndTimestamp = Date().toInstant().epochSecond
         }
         _workoutStatistics.postValue(WorkoutStatistics.empty)
         UserDataSourceProvider.instance.getDataSource().addRunToHistory(runDescription);
     }
 
-    private fun getRoute(runBreakpoints: List<RunBreakpoint>): List<RoutePoint>
-            = runBreakpoints.map { breakPoint -> breakPoint.point }.filterNotNull();
+    private fun getRoute(runBreakpoints: List<RunBreakpoint>): List<RoutePoint> =
+        runBreakpoints.map { breakPoint -> breakPoint.point }.filterNotNull();
 
     private fun calculateCalories(runBreakpoints: List<RunBreakpoint>): Int = 0;
 
-    private fun calculateDistance(runBreakpoints: List<RunBreakpoint>)
-            = runBreakpoints.sumBy { it.distance }
+    private fun calculateDistance(runBreakpoints: List<RunBreakpoint>) =
+        runBreakpoints.sumBy { it.distance }
 
-    private fun calculatePacePerKm(runBreakpoints: List<RunBreakpoint>): List<Double>
-            =  runBreakpoints.groupByKm().map { 0.0 }
+    private fun calculatePacePerKm(runBreakpoints: List<RunBreakpoint>): List<Double> =
+        runBreakpoints.groupByKm().map { 0.0 }
 //        it.distance.toDouble() / it.duration.inSeconds.toInt() };
 
 
 }
 
-class RunningViewModelFactory(): ViewModelProvider.Factory {
+class RunningViewModelFactory() : ViewModelProvider.Factory {
     @ExperimentalTime
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(RunningViewModel::class.java)) {
