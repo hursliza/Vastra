@@ -94,7 +94,7 @@ class RunningViewModel : ViewModel() {
 
     private fun recalculateStatistics(runBreakpoints: List<RunBreakpoint>) {
         val avgPaces = calculatePacePerKm(runBreakpoints);
-        val calories = calculateCalories(runBreakpoints);
+        val calories = calculateCalories(runBreakpoints, runDuration.value);
         val distance = calculateDistance(runBreakpoints);
         _workoutStatistics.postValue(
             WorkoutStatistics(
@@ -117,7 +117,7 @@ class RunningViewModel : ViewModel() {
         val runDescription = RunDescription().also {
             it.route = getRoute(_runBreakpoints);
             it.runDuration = runDuration.value?.toLong(DurationUnit.SECONDS);
-            it.calories = calculateCalories(_runBreakpoints);
+            it.calories = calculateCalories(_runBreakpoints, runDuration.value)
             it.distance = calculateDistance(_runBreakpoints);
             it.pacePerKm = calculatePacePerKm(_runBreakpoints);
             it.runEndTimestamp = Date().toInstant().epochSecond
@@ -129,7 +129,20 @@ class RunningViewModel : ViewModel() {
     private fun getRoute(runBreakpoints: List<RunBreakpoint>): List<RoutePoint> =
         runBreakpoints.map { breakPoint -> breakPoint.point }.filterNotNull();
 
-    private fun calculateCalories(runBreakpoints: List<RunBreakpoint>): Int = 0;
+    private fun calculateCalories(runBreakpoints: List<RunBreakpoint>, runDuration: Duration?): Int {
+        val distance = calculateDistance(runBreakpoints)
+        if (runDuration != null) {
+            val velocity = distance / runDuration.inHours
+            if (velocity < 8) {
+                return (581 * runDuration.inHours).toInt()
+            }
+            if (velocity < 16) {
+                return (1134 * runDuration.inHours).toInt()
+            }
+            return (1267 * runDuration.inHours).toInt()
+        }
+        return 0
+    };
 
     private fun calculateDistance(runBreakpoints: List<RunBreakpoint>) =
         runBreakpoints.sumBy { it.distance }
