@@ -77,7 +77,7 @@ class RunningViewModel : ViewModel() {
     }
 
     fun addRoutePoint(newBreakpoint: RoutePoint) {
-        val previousBreakpoint = _runBreakpoints.last();
+        val previousBreakpoint = _runBreakpoints.last()
         val distance = newBreakpoint.distanceTo(previousBreakpoint.point ?: newBreakpoint);
         val duration = (runDuration.value ?: ZERO).minus(previousBreakpoint.duration);
         _runBreakpoints.add(
@@ -114,6 +114,7 @@ class RunningViewModel : ViewModel() {
         _state.postValue(RunViewModelState.InActive);
         _timer?.cancel();
         saveUserRun();
+        cleanRunBreakouts();
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -158,7 +159,10 @@ class RunningViewModel : ViewModel() {
         runBreakpoints.groupByKm().map { 0.0 }
 //        it.distance.toDouble() / it.duration.inSeconds.toInt() };
 
-
+    private fun cleanRunBreakouts() {
+        _runBreakpoints.clear()
+        _runBreakpoints.add(RunBreakpoint.empty)
+    }
 }
 
 class RunningViewModelFactory() : ViewModelProvider.Factory {
