@@ -10,8 +10,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.io.vastra.R
 import com.io.vastra.data.models.HistoryItem
 import com.io.vastra.history.historyItem.HistoryDetailsStatisticsArgs
+import com.io.vastra.utils.toVastraTimeString
+import kotlin.time.ExperimentalTime
 
 
+@ExperimentalTime
 class HistoryAdapter(var dataSet: Array<HistoryItem>): RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val date: TextView
@@ -34,7 +37,7 @@ class HistoryAdapter(var dataSet: Array<HistoryItem>): RecyclerView.Adapter<Hist
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.date.text = dataSet[position].date.toString()
-        holder.duration.text = dataSet[position].duration.toString()
+        holder.duration.text = dataSet[position].duration.toVastraTimeString();
         holder.distance.text = dataSet[position].distance
 
         holder.itemView.setOnClickListener(object: View.OnClickListener{

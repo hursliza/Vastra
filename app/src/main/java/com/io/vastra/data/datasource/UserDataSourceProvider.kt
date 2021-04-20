@@ -13,7 +13,7 @@ class UserDataSourceProvider(userId: String) {
         @Volatile
         private var INSTANCE: UserDataSourceProvider? = null;
 
-        public val instance: UserDataSourceProvider
+        val instance: UserDataSourceProvider
         get() = INSTANCE ?: throw InstantiationError("Cannot return an instance for datasource that was not instantiated");
 
         fun getInstance(requestedUserId: String?): UserDataSourceProvider {
@@ -28,7 +28,7 @@ class UserDataSourceProvider(userId: String) {
             } ?: instantiate(requestedUserId);
         }
 
-        public fun instantiate(userId: String): UserDataSourceProvider
+        fun instantiate(userId: String): UserDataSourceProvider
                 = synchronized(this) {
             UserDataSourceProvider(userId).also {
                 INSTANCE = it;

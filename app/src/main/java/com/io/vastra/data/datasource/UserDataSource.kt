@@ -8,9 +8,11 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import com.io.vastra.data.entities.RunDescription
 import com.io.vastra.data.entities.UserDetails
 
-class UserDataSource(public val userId: String) {
+
+class UserDataSource(val userId: String) {
     val currentUser: LiveData<UserDetails>
         get() = userLiveData;
 
@@ -34,9 +36,17 @@ class UserDataSource(public val userId: String) {
                     userLiveData.value = it;
                 }
             }
-
         })
     }
 
 
+    fun addRunToHistory(runDescription: RunDescription) {
+        val listRef = Firebase.database.getReference("${userId}/${UserDetails::runHistory.name}");
+        val newNode = listRef.push();
+        newNode.setValue(runDescription);
+    }
+
+    private fun checkIfRewardReceived(userDescription: UserDetails) {
+        // TODO: implement
+    };
 }

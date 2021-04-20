@@ -12,7 +12,7 @@ class ProfileViewModel(viewOwner: LifecycleOwner, userId: String): ViewModel() {
 
     init {
         userDataSource.currentUser.observe(viewOwner) {
-            val userAwards = it.userAwards.map {
+            val userAwards = it.userAwards.values.map {
                 it.description?.let { it1 -> Award(it1) }
             }.filterNotNull();
             _userAwards.postValue(userAwards);

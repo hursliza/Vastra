@@ -15,9 +15,11 @@ import com.io.vastra.history.HistoryFragment
 import com.io.vastra.profile.ProfileActivity
 import com.io.vastra.running.RunningFragment
 import com.mapbox.mapboxsdk.Mapbox
+import kotlin.time.ExperimentalTime
 
-val DEFAULT_USER_ID = "987654321";
+val DEFAULT_USER_ID = "123456789";
 
+@ExperimentalTime
 class MainActivity : AppCompatActivity() {
     internal lateinit var profileButton: ImageButton
     internal lateinit var tabs: TabLayout

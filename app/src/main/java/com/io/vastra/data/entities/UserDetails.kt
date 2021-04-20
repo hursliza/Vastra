@@ -4,6 +4,6 @@ import java.io.Serializable
 
 class UserDetails: Serializable {
     var userName: String? = null;
-    var userAwards: List<AwardDetails> = listOf();
-    var runHistory: List<RunDescription>? = listOf();
+    var userAwards: HashMap<String, AwardDetails> = hashMapOf();
+    var runHistory: HashMap<String, RunDescription>? = hashMapOf();
 }
