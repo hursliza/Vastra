@@ -86,7 +86,7 @@ class HistoryItemDetailsStatisticsFragment : Fragment() {
     fun updateView(description: RunDescription) {
         distance.text = getString(R.string.distance, description.distance);
         avgPace.text = getString(R.string.average_pace_history_details, description.pacePerKm.average());
-        maxPace.text = getString(R.string.max_pace_history_details, description.pacePerKm.maxOrNull() ?: 0f);
+        maxPace.text = getString(R.string.max_pace_history_details, description.pacePerKm.max() ?: 0f);
         val runDuration = (description.runDuration ?: 0).seconds;
         time.text =  runDuration.toVastraTimeString();
         calories.text = getString(R.string.calories, 875) //TODO count calories
