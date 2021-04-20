@@ -1,11 +1,14 @@
 package com.io.vastra.running
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.*
 import com.io.vastra.data.datasource.UserDataSourceProvider
 import com.io.vastra.data.entities.RoutePoint
 import com.io.vastra.data.entities.RunDescription
 import com.io.vastra.utils.euclidianDistance
 import java.lang.Integer.max
+import java.time.LocalDateTime.now
 import java.util.*
 import kotlin.concurrent.timer
 import kotlin.time.Duration
@@ -102,12 +105,14 @@ class RunningViewModel: ViewModel() {
 )       );
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun endRun() {
         _state.postValue(RunViewModelState.InActive);
         _timer?.cancel();
         saveUserRun();
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun saveUserRun() {
         val runDescription = RunDescription().also {
             it.route = getRoute(runBreakpoints);
@@ -115,6 +120,7 @@ class RunningViewModel: ViewModel() {
             it.calories = calculateCalories(runBreakpoints);
             it.distance =  calculateDistance(runBreakpoints);
             it.pacePerKm = calculatePace(runBreakpoints);
+            it.runEndTimestamp = Date().toInstant().epochSecond
         }
 
         UserDataSourceProvider.instance.getDataSource().addRunToHistory(runDescription);

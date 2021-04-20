@@ -11,7 +11,7 @@ inline fun <T:Any> ifLet(vararg elements: T?, closure: (List<T>) -> Unit) {
 }
 
 fun euclidianDistance(x1: RoutePoint, x2: RoutePoint)
-        = Math.sqrt(Math.pow(x1.first - x2.first, 2.0) + Math.pow(x1.second - x2.second, 2.0))
+        = Math.sqrt(Math.pow(x1.lat - x2.lat, 2.0) + Math.pow(x1.long - x2.long, 2.0))
 
 
 @ExperimentalTime
