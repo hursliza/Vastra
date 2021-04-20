@@ -15,6 +15,8 @@ fun euclidianDistance(x1: RoutePoint, x2: RoutePoint)
 
 
 @ExperimentalTime
-fun Duration.toVastraTimeString(): CharSequence? {
-    return String.format("%2d:%2d:%2d", this.inHours.toInt(), this.inMinutes.toInt() % 60, this.inSeconds.toInt() % 60)
-}
+fun Duration.toVastraTimeString(): CharSequence?
+        = String.format("%2d:%2d:%2d h", this.inHours.toInt(), this.inMinutes.toInt() % 60, this.inSeconds.toInt() % 60)
+
+
+fun Double.toVastraDistanceString(): CharSequence? = String.format("%.2f km", this);

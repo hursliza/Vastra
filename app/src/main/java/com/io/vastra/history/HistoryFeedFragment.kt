@@ -43,7 +43,7 @@ class HistoryFeedFragment: Fragment() {
                 runDescription ->
                 HistoryItem(
                     duration = (runDescription.runDuration ?: 0).seconds,
-                    distance = runDescription.distance.toString(),
+                    distance = runDescription.distance,
                     date = if(runDescription.runEndTimestamp === null) Date() else Date(
                         runDescription.runEndTimestamp!! * 1000
                     )
