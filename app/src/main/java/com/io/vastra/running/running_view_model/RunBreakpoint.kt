@@ -6,12 +6,12 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
 @ExperimentalTime
-data class RunBreakpoint(var point: RoutePoint, var duration: Duration, var distance: Int) {
+data class RunBreakpoint(var point: RoutePoint? = null, var duration: Duration, var distance: Int) {
     companion object {
         val empty
-        get() = RunBreakpoint(RoutePoint(0.0, 0.0),
-            0.0.seconds,
-            0);
+        get() = RunBreakpoint(
+            duration=0.0.seconds,
+            distance = 0);
     }
 };
 
