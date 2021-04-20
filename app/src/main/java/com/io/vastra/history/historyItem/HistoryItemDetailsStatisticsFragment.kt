@@ -22,6 +22,7 @@ import com.io.vastra.utils.toVastraDistanceString
 import com.io.vastra.utils.toVastraTimeString
 import java.math.BigDecimal
 import java.math.RoundingMode
+import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
@@ -90,7 +91,7 @@ class HistoryItemDetailsStatisticsFragment : Fragment() {
         maxPace.text = getString(R.string.max_pace_history_details, description.pacePerKm.max() ?: 0f);
         val runDuration = (description.runDuration ?: 0).seconds;
         time.text =  runDuration.toVastraTimeString();
-        calories.text = getString(R.string.calories, 875) //TODO count calories
+        calories.text = getVastraCaloriesString(description.distance, runDuration)
         val data: BarData = createChartData(description.pacePerKm);
         configureChartAppearance();
         prepareChartData(data);
@@ -139,6 +140,22 @@ class HistoryItemDetailsStatisticsFragment : Fragment() {
         data.setValueTextSize(12f);
         chart.setData(data);
         chart.invalidate();
+    }
+
+    @ExperimentalTime
+    private fun getVastraCaloriesString(distance: Int, duration: Duration): CharSequence? =
+        String.format("%.2f kcal", calcCaloriesSum(distance, duration))
+
+    @ExperimentalTime
+    private fun calcCaloriesSum(distance: Int, duration: Duration): Double {
+        val velocity = distance / duration.inHours
+        if (velocity < 8) {
+            return 581 * duration.inHours
+        }
+        if (velocity < 16) {
+            return 1134 * duration.inHours
+        }
+        return 1267 * duration.inHours
     }
 
 }
