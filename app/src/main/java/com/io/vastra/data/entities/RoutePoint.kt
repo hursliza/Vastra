@@ -17,4 +17,6 @@ class RoutePoint(var lat: Double = 0.0, var long: Double = 0.0) {
         }
         return location1.distanceTo(location2).toInt();
     }
+
+
 }

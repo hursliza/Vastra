@@ -74,7 +74,7 @@ WorkoutStatistics.empty
 
     fun addRoutePoint(newBreakpoint: RoutePoint) {
         val previousBreakpoint = runBreakpoints.last();
-        val distance = newBreakpoint.distanceTo(previousBreakpoint.point);
+        val distance = newBreakpoint.distanceTo(previousBreakpoint.point ?: newBreakpoint);
         val duration = (runDuration.value ?: ZERO).minus(previousBreakpoint.duration);
         runBreakpoints.add(
             RunBreakpoint(
@@ -123,7 +123,7 @@ WorkoutStatistics.empty
     }
 
     private fun getRoute(runBreakpoints: List<RunBreakpoint>): List<RoutePoint>
-            = runBreakpoints.map { breakPoint -> breakPoint.point };
+            = runBreakpoints.map { breakPoint -> breakPoint.point }.filterNotNull();
 
     private fun calculateCalories(runBreakpoints: List<RunBreakpoint>): Int = 0;
 
