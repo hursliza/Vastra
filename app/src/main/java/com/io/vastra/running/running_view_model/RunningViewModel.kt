@@ -94,7 +94,7 @@ WorkoutStatistics.empty
         val distance = calculateDistance(runBreakpoints);
         _workoutStatistics.postValue(
             WorkoutStatistics(
-                avgPace = avgPaces.last(),
+                avgPace = 0.0, //avgPaces.last(),
                 calories = calories,
                 distance = distance
             )
@@ -131,7 +131,8 @@ WorkoutStatistics.empty
             = runBreakpoints.sumBy { it.distance }
 
     private fun calculatePacePerKm(runBreakpoints: List<RunBreakpoint>): List<Double>
-            =  runBreakpoints.groupByKm().map { it.distance.toDouble() / it.duration.inSeconds.toInt() };
+            =  runBreakpoints.groupByKm().map { 0.0 }
+//        it.distance.toDouble() / it.duration.inSeconds.toInt() };
 
 
 }
