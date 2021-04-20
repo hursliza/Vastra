@@ -12,7 +12,7 @@ class RoutePoint(var lat: Double = 0.0, var long: Double = 0.0) {
             it.longitude = long
         };
         val location2 = Location("locationB").also {
-            it.latitude = other.long;
+            it.latitude = other.lat;
             it.longitude = other.long
         }
         return location1.distanceTo(location2).toInt();

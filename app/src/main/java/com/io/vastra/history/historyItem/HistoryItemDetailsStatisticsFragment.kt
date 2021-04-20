@@ -18,6 +18,7 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import com.io.vastra.R
 import com.io.vastra.data.datasource.UserDataSourceProvider
 import com.io.vastra.data.entities.RunDescription
+import com.io.vastra.utils.toVastraDistanceString
 import com.io.vastra.utils.toVastraTimeString
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -84,7 +85,7 @@ class HistoryItemDetailsStatisticsFragment : Fragment() {
 
     @ExperimentalTime
     fun updateView(description: RunDescription) {
-        distance.text = getString(R.string.distance, description.distance);
+        distance.text = description.distance.toVastraDistanceString();
         avgPace.text = getString(R.string.average_pace_history_details, description.pacePerKm.average());
         maxPace.text = getString(R.string.max_pace_history_details, description.pacePerKm.max() ?: 0f);
         val runDuration = (description.runDuration ?: 0).seconds;

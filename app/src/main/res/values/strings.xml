@@ -5,7 +5,7 @@
     <string name="running">Running</string>
     <string name="average_pace_history_details">Avg. pace: %.2f  min/km</string>
     <string name="max_pace_history_details">Max pace: %.2s  min/km</string>
-    <string name="distance">%.2f km</string>
+    <string name="distance">%.2d km</string>
     <string name="calories">%d kcal</string>
     <string name="mapbox_access_token">pk.eyJ1IjoiYWxpY2phazE1MTkiLCJhIjoiY2tub3RxajBmMGR3bDJvbzdpZzI4OWk3dCJ9.8H8ZAhNwClEJQfbBn1slag</string>
     <string name="current_pace">%.2s min/km</string>
