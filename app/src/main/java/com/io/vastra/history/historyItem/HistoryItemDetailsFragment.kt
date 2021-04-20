@@ -14,10 +14,12 @@ import androidx.navigation.fragment.findNavController
 import com.github.mikephil.charting.components.Description
 import com.io.vastra.R
 import com.io.vastra.data.entities.RunDescription
+import com.io.vastra.utils.toVastraDateString
 
 class HistoryItemDetailsFragment : Fragment() {
 
-    private val viewModel: HistoryItemViewModel by viewModels() {
+    private lateinit var workoutDate: TextView;
+    val viewModel: HistoryItemViewModel by viewModels() {
         val idx = arguments?.getInt(HistoryDetailsStatisticsArgs.RunIdx.name)
             ?: throw InstantiationError("Cannot create details when run index is not provided");
         HistoryItemViewModelFactory(viewLifecycleOwner, idx);
@@ -35,17 +37,19 @@ class HistoryItemDetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_history_item_details, container, false)
-        var workoutDate = arguments?.getString("workoutDate")
-        if (workoutDate == null) workoutDate = "Thu May 12 00:00:00 GMT"
-
-        view.findViewById<TextView>(R.id.fragment_args).text = workoutDate
-
+        bindViews(view);
         configureDataSource()
         return view
     }
 
+    fun bindViews(mainView: View) {
+        workoutDate = mainView.findViewById(R.id.fragment_args)
+    }
+
+
     private fun configureDataSource() {
         viewModel.runDescription.observe(viewLifecycleOwner) {
+            workoutDate.text = it.runEndTimestamp.toVastraDateString()
             updateView(it)
         }
     }
