@@ -26,8 +26,7 @@ class ProfileActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_profile)
-        setSupportActionBar(findViewById(R.id.toolbar));
-        supportActionBar?.setDisplayShowTitleEnabled(false)
+        setupSupportBar()
 
         rv = findViewById(R.id.awards_rv)
         rv.layoutManager = LinearLayoutManager(this)
@@ -46,6 +45,13 @@ class ProfileActivity: AppCompatActivity() {
 
 
         configureViewModel();
+    }
+
+    private fun setupSupportBar() {
+        setSupportActionBar(findViewById(R.id.toolbar));
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true);
+        supportActionBar?.setDisplayShowHomeEnabled(true);
     }
 
     fun configureViewModel() {
