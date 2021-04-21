@@ -1,14 +1,13 @@
 package com.io.vastra.data.entities
 
+import com.io.vastra.running.running_view_model.RunBreakpoint
 import java.io.Serializable
-import java.sql.Time
-import java.util.*
-
 
 class RunDescription: Serializable {
-    var route: List<Pair<Double, Double>> = listOf();
-    var runDuration: Long? = null;
+    var runEndTimestamp: Long? = 0;
+    var route: List<RoutePoint> = listOf();
+    var runDuration: Long? = 0L;
     var calories: Int? = null;
-    var distance: Float? = null;
-    var pacePerKm: List<Float> = listOf();
+    var distance: Int = 0;
+    var pacePerKm: List<Double> = listOf();
 }

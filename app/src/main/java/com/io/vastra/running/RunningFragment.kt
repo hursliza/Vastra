@@ -5,9 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.io.vastra.R
+import com.io.vastra.running.running_view_model.RunningViewModel
+import com.io.vastra.running.running_view_model.RunningViewModelFactory
+import kotlin.time.ExperimentalTime
 
+@ExperimentalTime
 class RunningFragment: Fragment() {
+
+    private val viewModel: RunningViewModel by viewModels {
+        RunningViewModelFactory();
+    };
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -17,4 +26,5 @@ class RunningFragment: Fragment() {
         val view = inflater.inflate(R.layout.fragment_running, container, false)
         return view
     }
+
 }

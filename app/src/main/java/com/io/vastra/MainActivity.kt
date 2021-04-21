@@ -14,9 +14,12 @@ import com.io.vastra.data.datasource.UserDataSourceProvider
 import com.io.vastra.history.HistoryFragment
 import com.io.vastra.profile.ProfileActivity
 import com.io.vastra.running.RunningFragment
+import com.mapbox.mapboxsdk.Mapbox
+import kotlin.time.ExperimentalTime
 
-val DEFAULT_USER_ID = "987654321";
+val DEFAULT_USER_ID = "1345679";
 
+@ExperimentalTime
 class MainActivity : AppCompatActivity() {
     internal lateinit var profileButton: ImageButton
     internal lateinit var tabs: TabLayout
@@ -31,6 +34,8 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
         profileButton = findViewById(R.id.profile_button)
         profileButton.setOnClickListener(profileButtonListener())
+
+        Mapbox.getInstance(this, getString(R.string.mapbox_access_token))
 
         setCurrentUser();
         configureTabLayout();

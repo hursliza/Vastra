@@ -1,35 +1,38 @@
 package com.io.vastra.running.map_fragment
 
-import androidx.fragment.app.Fragment
-
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.io.vastra.R
+import com.io.vastra.data.entities.RoutePoint
+import com.io.vastra.running.running_view_model.RunViewModelState
+import com.io.vastra.running.running_view_model.RunningViewModel
+import com.io.vastra.running.running_view_model.RunningViewModelFactory
+import com.mapbox.mapboxsdk.annotations.MarkerOptions
+import com.mapbox.mapboxsdk.annotations.PolylineOptions
+import kotlin.time.ExperimentalTime
 
+import com.mapbox.mapboxsdk.camera.CameraPosition
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
+import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.maps.MapView
+import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.maps.Style
+
+
+@ExperimentalTime
 class MapFragment : Fragment() {
 
-    private val callback = OnMapReadyCallback { googleMap ->
-        /**
-         * Manipulates the map once available.
-         * This callback is triggered when the map is ready to be used.
-         * This is where we can add markers or lines, add listeners or move the camera.
-         * In this case, we just add a marker near Sydney, Australia.
-         * If Google Play services is not installed on the device, the user will be prompted to
-         * install it inside the SupportMapFragment. This method will only be triggered once the
-         * user has installed Google Play services and returned to the app.
-         */
-        val sydney = LatLng(-34.0, 151.0)
-        googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+    private lateinit var mapView: MapView
+    private var state: RunViewModelState = RunViewModelState.InActive;
+    private val viewModel: RunningViewModel by viewModels({ requireParentFragment() }) {
+        RunningViewModelFactory();
     }
 
     override fun onCreateView(
@@ -37,12 +40,68 @@ class MapFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_map, container, false)
+        val mainView = inflater.inflate(R.layout.fragment_map, container, false)
+
+        mapView = mainView.findViewById(R.id.mapView)
+        mapView.onCreate(savedInstanceState)
+        configureSubscriptions();
+        return mainView;
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(callback)
+    private fun configureSubscriptions() {
+        viewModel.state.observe(viewLifecycleOwner) {
+            state = it;
+        }
+
+        viewModel.currentLocation.observe(viewLifecycleOwner) {
+            mapView.getMapAsync { mapboxMap ->
+
+                when (state) {
+                    RunViewModelState.Active -> {
+                        updateMapMarker(mapboxMap)
+                        updateMapPolyline(mapboxMap)
+                    }
+                    else -> updateMapMarker(mapboxMap)
+                }
+            }
+        }
     }
+
+    private fun updateMapMarker(mapboxMap: MapboxMap) {
+        mapboxMap.setStyle(Style.MAPBOX_STREETS)
+        val actualRoutePoint = viewModel.currentLocation.value!!
+        val actualPosition = LatLng(actualRoutePoint.lat, actualRoutePoint.long)
+        val cameraPosition: CameraPosition = CameraPosition.Builder()
+            .target(actualPosition) // set the camera's center position
+            .zoom(15.0) // set the camera's zoom level
+            .build()
+        mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+
+        mapboxMap.clear()
+        mapboxMap.addMarker(
+            MarkerOptions()
+                .position(LatLng(actualPosition))
+                .title("Your actual location")
+        )
+    }
+
+    private fun updateMapPolyline(mapboxMap: MapboxMap) {
+        if (viewModel.runBreakpoints.isNotEmpty()) {
+            val points = viewModel.runBreakpoints
+                .filter { runBreakpoint -> runBreakpoint.point != null }
+                .map { runBreakpoint ->
+                    LatLng(
+                        runBreakpoint.point!!.lat,
+                        runBreakpoint.point!!.long
+                    )
+                }
+            mapboxMap.addPolyline(
+                PolylineOptions()
+                    .addAll(points)
+                    .color(Color.parseColor("#3bb2d0"))
+                    .width(2f)
+            );
+        }
+    }
+
 }
