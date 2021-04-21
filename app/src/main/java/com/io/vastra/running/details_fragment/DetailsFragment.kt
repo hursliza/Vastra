@@ -1,7 +1,6 @@
 package com.io.vastra.running.details_fragment
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
@@ -29,6 +28,14 @@ import com.io.vastra.utils.toVastraDistanceString
 import com.io.vastra.utils.toVastraTimeString
 import kotlin.time.ExperimentalTime
 
+enum class Command {
+    StartRun,
+    ResumeRun,
+    EndRun,
+    PauseRun,
+    SaveRun
+}
+
 @ExperimentalTime
 class DetailsFragment : Fragment() {
 
@@ -36,6 +43,10 @@ class DetailsFragment : Fragment() {
     private lateinit var distance: TextView;
     private lateinit var averagePace: TextView;
     private lateinit var calories: TextView;
+    private lateinit var fab_start: FloatingActionButton
+    private lateinit var fab_stop: FloatingActionButton
+    private lateinit var fab_pause: FloatingActionButton
+    private lateinit var fab_save: FloatingActionButton
     private var state: RunViewModelState = RunViewModelState.InActive;
 
     internal lateinit var fusedLocationClient: FusedLocationProviderClient;
@@ -85,10 +96,16 @@ class DetailsFragment : Fragment() {
         runTime = mainView.findViewById(R.id.time);
         distance = mainView.findViewById(R.id.distance);
         averagePace = mainView.findViewById(R.id.average_pace);
-        mainView.findViewById<FloatingActionButton>(R.id.floating_action_button)
-            .setOnClickListener {
-                toggleRunState()
-            };
+
+        fab_start = mainView.findViewById(R.id.fab_start)
+        fab_stop = mainView.findViewById(R.id.fab_stop)
+        fab_pause = mainView.findViewById(R.id.fab_pause)
+        fab_save = mainView.findViewById(R.id.fab_save)
+        fab_start.setOnClickListener(detailsFABOnClickListener(Command.StartRun))
+        fab_pause.setOnClickListener(detailsFABOnClickListener(Command.PauseRun))
+        fab_stop.setOnClickListener(detailsFABOnClickListener(Command.EndRun))
+        fab_save.setOnClickListener(detailsFABOnClickListener(Command.SaveRun))
+
         calories = mainView.findViewById(R.id.calories);
     }
 
@@ -145,6 +162,56 @@ class DetailsFragment : Fragment() {
         when (state) {
             RunViewModelState.InActive -> viewModel.startRun();
             RunViewModelState.Active -> viewModel.endRun();
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun detailsFABOnClickListener(command: Command?): View.OnClickListener? {
+        return View.OnClickListener {
+            when (state) {
+                RunViewModelState.Active -> onRunActive()
+                RunViewModelState.Paused -> command?.let { it1 -> onRunPaused(it1) }
+                RunViewModelState.InActive -> command?.let { it1 -> onRunInActive(it1) }
+                }
+        }
+    }
+
+    fun onRunActive() {
+        viewModel.pauseRun()
+        fab_stop.visibility = View.VISIBLE
+        fab_start.visibility = View.VISIBLE
+        fab_pause.visibility = View.GONE
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun onRunPaused(command: Command){
+        if (command == Command.ResumeRun){
+            viewModel.resumeRun()
+            fab_pause.visibility = View.VISIBLE
+            fab_stop.visibility = View.GONE
+            fab_start.visibility = View.GONE
+        }
+        if (command == Command.EndRun){
+            viewModel.endRun()
+            fab_save.visibility = View.VISIBLE
+            fab_stop.visibility = View.GONE
+            fab_start.visibility = View.GONE
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun onRunInActive(command: Command){
+        if (command == Command.StartRun){
+            viewModel.startRun()
+            fab_start.visibility = View.GONE
+            fab_start.setOnClickListener(detailsFABOnClickListener(Command.ResumeRun))
+            fab_pause.visibility = View.VISIBLE
+        }
+        if (command == Command.SaveRun){
+            //TODO Save run
+            fab_start.visibility = View.VISIBLE
+            fab_start.setOnClickListener(detailsFABOnClickListener(Command.StartRun))
+            fab_save.visibility = View.GONE
         }
     }
 }

@@ -1,7 +1,6 @@
 package com.io.vastra.history.historyItem
 
 import android.os.Bundle
-import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,6 @@ import androidx.activity.addCallback
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
-import com.github.mikephil.charting.components.Description
 import com.io.vastra.R
 import com.io.vastra.data.entities.RunDescription
 import com.io.vastra.utils.toVastraDateString
