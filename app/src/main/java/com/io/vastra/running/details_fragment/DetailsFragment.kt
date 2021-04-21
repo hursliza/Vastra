@@ -125,8 +125,8 @@ class DetailsFragment : Fragment() {
             location.longitude
         )
         when (state) {
-            RunViewModelState.InActive -> viewModel.updateCurentLocation(routePoint)
             RunViewModelState.Active -> viewModel.addRoutePoint(routePoint)
+            else -> viewModel.updateCurentLocation(routePoint)
         }
     }
 

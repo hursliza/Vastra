@@ -61,7 +61,7 @@ class MapFragment : Fragment() {
                         updateMapMarker(mapboxMap)
                         updateMapPolyline(mapboxMap)
                     }
-                    RunViewModelState.InActive -> updateMapMarker(mapboxMap)
+                    else -> updateMapMarker(mapboxMap)
                 }
             }
         }
