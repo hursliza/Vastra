@@ -196,7 +196,7 @@ class DetailsFragment : Fragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-fun onRunInActive(){
+    fun onRunInActive(){
         viewModel.startRun()
         fab_start.visibility = View.GONE
         fab_start.setOnClickListener(detailsFABOnClickListener(Command.ResumeRun))
