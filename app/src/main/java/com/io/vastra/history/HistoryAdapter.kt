@@ -44,7 +44,7 @@ class HistoryAdapter(var dataSet: Array<HistoryItem>): RecyclerView.Adapter<Hist
 
         holder.itemView.setOnClickListener(object: View.OnClickListener{
             override fun onClick(v: View?) {
-                val bundle = bundleOf(HistoryDetailsStatisticsArgs.RunIdx.name to position.toString())
+                val bundle = bundleOf(HistoryDetailsStatisticsArgs.RunIdx.name to position)
                 val navController = Navigation.findNavController(holder.itemView)
                 navController.navigate(R.id.toDetails, bundle)
             }

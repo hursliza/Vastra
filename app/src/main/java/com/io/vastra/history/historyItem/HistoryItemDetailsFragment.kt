@@ -9,11 +9,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
 import androidx.navigation.fragment.findNavController
-import com.github.mikephil.charting.components.Description
 import com.io.vastra.R
-import com.io.vastra.data.entities.RunDescription
 
 class HistoryItemDetailsFragment : Fragment() {
 
@@ -40,17 +37,6 @@ class HistoryItemDetailsFragment : Fragment() {
 
         view.findViewById<TextView>(R.id.fragment_args).text = workoutDate
 
-        configureDataSource()
         return view
-    }
-
-    private fun configureDataSource() {
-        viewModel.runDescription.observe(viewLifecycleOwner) {
-            updateView(it)
-        }
-    }
-
-    private fun updateView(description: RunDescription){
-        description.route
     }
 }

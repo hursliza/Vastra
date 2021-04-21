@@ -24,8 +24,10 @@ class HistoryItemMapFragment : Fragment() {
 
     private lateinit var mapView: MapView
 
-    private val viewModel: HistoryItemViewModel by viewModels({ requireParentFragment() }) {
-        HistoryItemViewModelFactory(viewLifecycleOwner);
+    val viewModel: HistoryItemViewModel by viewModels() {
+        val idx = parentFragment?.arguments?.getInt(HistoryDetailsStatisticsArgs.RunIdx.name)
+            ?: throw InstantiationError("Cannot create details when run index is not provided")
+        HistoryItemViewModelFactory(viewLifecycleOwner, idx)
     }
 
     override fun onCreateView(
@@ -60,7 +62,6 @@ class HistoryItemMapFragment : Fragment() {
             mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
 
             val points = description.route
-                .filter { true }
                 .map { runBreakpoint ->
                     LatLng(
                         runBreakpoint.lat,
