@@ -40,8 +40,11 @@ class HistoryItemDetailsStatisticsFragment : Fragment() {
     internal lateinit var avgPace: TextView;
     internal lateinit var maxPace: TextView;
 
-    private val viewModel: HistoryItemViewModel by viewModels({requireParentFragment()}) {
-        HistoryItemViewModelFactory(viewLifecycleOwner);
+
+    val viewModel: HistoryItemViewModel by viewModels() {
+        val idx = parentFragment?.arguments?.getInt(HistoryDetailsStatisticsArgs.RunIdx.name)
+            ?: throw InstantiationError("Cannot create details when run index is not provided");
+        HistoryItemViewModelFactory(viewLifecycleOwner, idx);
     }
 
 
@@ -71,15 +74,6 @@ class HistoryItemDetailsStatisticsFragment : Fragment() {
     private fun configureDataSource() {
         viewModel.runDescription.observe(viewLifecycleOwner) {
             updateView(it)
-        }
-
-
-        val defaultIdx = -1;
-        val runIdx =  arguments?.getInt(HistoryDetailsStatisticsArgs.RunIdx.name) ?: defaultIdx;
-        if (runIdx != defaultIdx) {
-            UserDataSourceProvider.instance.getDataSource().currentUser.observe(viewLifecycleOwner) {
-                it.runHistory?.values?.toList()?.get(runIdx)?.let { item -> updateView(item) };
-            }
         }
     }
 

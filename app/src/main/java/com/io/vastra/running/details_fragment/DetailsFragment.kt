@@ -1,6 +1,7 @@
 package com.io.vastra.running.details_fragment
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Build
@@ -65,6 +66,7 @@ class DetailsFragment : Fragment() {
         startLocation(mainView);
         return mainView;
     }
+
 
     private fun configureSubscriptions() {
         viewModel.runDuration.observe(viewLifecycleOwner) {

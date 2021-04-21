@@ -17,7 +17,7 @@ import com.io.vastra.running.RunningFragment
 import com.mapbox.mapboxsdk.Mapbox
 import kotlin.time.ExperimentalTime
 
-val DEFAULT_USER_ID = "1234554321";
+val DEFAULT_USER_ID = "1345679";
 
 @ExperimentalTime
 class MainActivity : AppCompatActivity() {

@@ -11,8 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.io.vastra.R
 import com.io.vastra.data.datasource.UserDataSourceProvider
 import com.io.vastra.data.models.HistoryItem
-import java.sql.Time
-import java.util.*
+import com.io.vastra.utils.toVastraDate
 import kotlin.time.ExperimentalTime
 import kotlin.time.seconds
 
@@ -44,9 +43,7 @@ class HistoryFeedFragment: Fragment() {
                 HistoryItem(
                     duration = (runDescription.runDuration ?: 0).seconds,
                     distance = runDescription.distance,
-                    date = if(runDescription.runEndTimestamp === null) Date() else Date(
-                        runDescription.runEndTimestamp!! * 1000
-                    )
+                    date = runDescription.runEndTimestamp.toVastraDate()
                 )
             }.toTypedArray();
             adapter.dataSet = historyItems;
@@ -54,3 +51,6 @@ class HistoryFeedFragment: Fragment() {
         }
     }
 }
+
+
+
