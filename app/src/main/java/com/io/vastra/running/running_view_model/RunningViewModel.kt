@@ -124,6 +124,7 @@ class RunningViewModel : ViewModel() {
     fun endRun() {
         _state.postValue(RunViewModelState.InActive);
         _timer?.cancel();
+        _runDuration.postValue(ZERO)
         saveUserRun();
         cleanRunBreakouts();
     }

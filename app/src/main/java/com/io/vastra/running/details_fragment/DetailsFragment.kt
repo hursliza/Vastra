@@ -32,8 +32,7 @@ enum class Command {
     StartRun,
     ResumeRun,
     EndRun,
-    PauseRun,
-    SaveRun
+    PauseRun
 }
 
 @ExperimentalTime
@@ -46,7 +45,6 @@ class DetailsFragment : Fragment() {
     private lateinit var fab_start: FloatingActionButton
     private lateinit var fab_stop: FloatingActionButton
     private lateinit var fab_pause: FloatingActionButton
-    private lateinit var fab_save: FloatingActionButton
     private var state: RunViewModelState = RunViewModelState.InActive;
 
     internal lateinit var fusedLocationClient: FusedLocationProviderClient;
@@ -100,11 +98,9 @@ class DetailsFragment : Fragment() {
         fab_start = mainView.findViewById(R.id.fab_start)
         fab_stop = mainView.findViewById(R.id.fab_stop)
         fab_pause = mainView.findViewById(R.id.fab_pause)
-        fab_save = mainView.findViewById(R.id.fab_save)
         fab_start.setOnClickListener(detailsFABOnClickListener(Command.StartRun))
         fab_pause.setOnClickListener(detailsFABOnClickListener(Command.PauseRun))
         fab_stop.setOnClickListener(detailsFABOnClickListener(Command.EndRun))
-        fab_save.setOnClickListener(detailsFABOnClickListener(Command.SaveRun))
 
         calories = mainView.findViewById(R.id.calories);
     }
@@ -171,8 +167,8 @@ class DetailsFragment : Fragment() {
             when (state) {
                 RunViewModelState.Active -> onRunActive()
                 RunViewModelState.Paused -> command?.let { it1 -> onRunPaused(it1) }
-                RunViewModelState.InActive -> command?.let { it1 -> onRunInActive(it1) }
-                }
+                RunViewModelState.InActive -> onRunInActive()
+            }
         }
     }
 
@@ -193,25 +189,17 @@ class DetailsFragment : Fragment() {
         }
         if (command == Command.EndRun){
             viewModel.endRun()
-            fab_save.visibility = View.VISIBLE
             fab_stop.visibility = View.GONE
-            fab_start.visibility = View.GONE
+            fab_start.visibility = View.VISIBLE
+            fab_start.setOnClickListener(detailsFABOnClickListener(Command.StartRun))
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun onRunInActive(command: Command){
-        if (command == Command.StartRun){
-            viewModel.startRun()
-            fab_start.visibility = View.GONE
-            fab_start.setOnClickListener(detailsFABOnClickListener(Command.ResumeRun))
-            fab_pause.visibility = View.VISIBLE
-        }
-        if (command == Command.SaveRun){
-            //TODO Save run
-            fab_start.visibility = View.VISIBLE
-            fab_start.setOnClickListener(detailsFABOnClickListener(Command.StartRun))
-            fab_save.visibility = View.GONE
-        }
+fun onRunInActive(){
+        viewModel.startRun()
+        fab_start.visibility = View.GONE
+        fab_start.setOnClickListener(detailsFABOnClickListener(Command.ResumeRun))
+        fab_pause.visibility = View.VISIBLE
     }
 }
