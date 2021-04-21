@@ -60,7 +60,6 @@ class HistoryItemMapFragment : Fragment() {
             mapboxMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
 
             val points = description.route
-                .filter { true }
                 .map { runBreakpoint ->
                     LatLng(
                         runBreakpoint.lat,
