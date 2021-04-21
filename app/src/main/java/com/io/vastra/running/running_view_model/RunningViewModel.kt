@@ -6,6 +6,8 @@ import androidx.lifecycle.*
 import com.io.vastra.data.datasource.UserDataSourceProvider
 import com.io.vastra.data.entities.RoutePoint
 import com.io.vastra.data.entities.RunDescription
+import com.io.vastra.utils.getDelta
+import com.io.vastra.utils.toMinutesPerKm
 import java.util.*
 import kotlin.concurrent.timer
 import kotlin.time.Duration
@@ -50,7 +52,7 @@ class RunningViewModel : ViewModel() {
         get() = _currentLocation;
 
     private val _runBreakpoints: MutableList<RunBreakpoint> = mutableListOf(RunBreakpoint.empty);
-    val runBreakpoints: MutableList<RunBreakpoint>
+    val runBreakpoints: List<RunBreakpoint>
         get() = _runBreakpoints
     //endregion
 
@@ -87,10 +89,12 @@ class RunningViewModel : ViewModel() {
         }
     }
 
+    private var lastPointEmit: Duration = ZERO;
     fun addRoutePoint(newBreakpoint: RoutePoint) {
         val previousBreakpoint = _runBreakpoints.last()
         val distance = newBreakpoint.distanceTo(previousBreakpoint.point ?: newBreakpoint);
-        val duration = previousBreakpoint.duration?.let { (runDuration.value ?: ZERO).minus(it) };
+        val duration = runDuration.value.getDelta(lastPointEmit);
+        lastPointEmit = runDuration.value ?: lastPointEmit;
         _runBreakpoints.add(
             RunBreakpoint(
                 distance = distance,
@@ -151,17 +155,17 @@ class RunningViewModel : ViewModel() {
         runDuration: Duration?
     ): Int {
         val distance = calculateDistance(runBreakpoints)
-        if (runDuration != null) {
-            val velocity = distance / runDuration.inHours
-            if (velocity < 8) {
-                return (581 * runDuration.inHours).toInt()
-            }
-            if (velocity < 16) {
-                return (1134 * runDuration.inHours).toInt()
-            }
-            return (1267 * runDuration.inHours).toInt()
+        if (runDuration == null) {
+            return 0;
         }
-        return 0
+        val velocity = distance / runDuration.inHours
+        return when (velocity.toInt()) {
+            0 -> 0
+            in 0..8 -> (581 * runDuration.inHours).toInt()
+            in 8..16 -> (1134 * runDuration.inHours).toInt()
+            else -> (1267 * runDuration.inHours).toInt()
+        }
+
     };
 
     private fun calculateDistance(runBreakpoints: List<RunBreakpoint>) =
@@ -169,8 +173,9 @@ class RunningViewModel : ViewModel() {
 
     private fun calculatePacePerKm(runBreakpoints: List<RunBreakpoint>): List<Double>
     {
-        val grouped = runBreakpoints.groupByKm().filter { it.duration != null }
-        return grouped.map { it.distance.toDouble() / it.duration!!.inSeconds.toInt() }
+        val grouped = runBreakpoints.groupByKm()
+
+        return grouped.filter{ it.distance != 0 }.map { it.duration.toMinutesPerKm(it.distance) }
     };
     private fun cleanRunBreakouts() {
         _runBreakpoints.clear()

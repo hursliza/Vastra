@@ -4,6 +4,7 @@ import android.R.attr.end
 import android.R.attr.start
 import android.location.Location
 import com.io.vastra.data.entities.RoutePoint
+import com.io.vastra.running.running_view_model.METERS_IN_KILOMETR
 import java.util.*
 
 import kotlin.time.Duration
@@ -27,3 +28,9 @@ fun Long?.toVastraDate(): Date = if(this === null) Date() else Date(this * 1000)
 
 fun Long?.toVastraDateString(): CharSequence? = this.toVastraDate().toVastraDateString();
 fun Date.toVastraDateString(): CharSequence? = java.text.SimpleDateFormat("yyyy-MM-dd").format(this)
+
+@ExperimentalTime
+fun Duration?.getDelta(other: Duration?) = (this ?: Duration.ZERO) - (other ?: Duration.ZERO);
+
+@ExperimentalTime
+fun Duration?.toMinutesPerKm(distance: Int) = METERS_IN_KILOMETR * (this?.inMinutes ?: 0.0) / distance;

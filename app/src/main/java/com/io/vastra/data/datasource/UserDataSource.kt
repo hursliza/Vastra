@@ -10,6 +10,7 @@ import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.io.vastra.award.AwardConstraint
 import com.io.vastra.award.RunMoreThanNTimesAward
+import com.io.vastra.award.SUPPORTED_AWARDS
 import com.io.vastra.data.entities.AwardDetails
 import com.io.vastra.data.entities.RunDescription
 import com.io.vastra.data.entities.UserDetails
@@ -64,12 +65,8 @@ class UserDataSource(val userId: String) {
         }
     }
 
-    private val implementedAwards: List<AwardConstraint> = listOf(
-        RunMoreThanNTimesAward(1),
-        RunMoreThanNTimesAward(10)
-    )
     private fun getRecevideAwards(userDescription: UserDetails): Collection<AwardDetails> {
-        val awardsToReceive = implementedAwards.filter { cnst -> userDescription.userAwards.values.find {
+        val awardsToReceive = SUPPORTED_AWARDS.filter { cnst -> userDescription.userAwards.values.find {
                 it.id == cnst.id
             } == null
         }
