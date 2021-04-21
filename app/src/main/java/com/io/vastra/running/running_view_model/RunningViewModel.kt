@@ -19,7 +19,8 @@ val METERS_IN_KILOMETR = 1000;
 
 enum class RunViewModelState {
     Active,
-    InActive
+    InActive,
+    Paused
 }
 
 @ExperimentalTime
@@ -63,6 +64,16 @@ class RunningViewModel : ViewModel() {
         startTimer();
     }
 
+    fun pauseRun() {
+        _state.postValue(RunViewModelState.Paused)
+        _timer?.cancel()
+    }
+
+    fun resumeRun() {
+        _state.postValue(RunViewModelState.Active)
+        startTimer()
+    }
+
     private fun startTimer() {
         val timerPeriod = 100L;
         val milisecondsInSecond = 100;
@@ -71,8 +82,8 @@ class RunningViewModel : ViewModel() {
             initialDelay = 0,
             period = timerPeriod
         ) {
-            val previousDuration = _runDuration.value?.inSeconds ?: 0.toDouble();
-            _runDuration.postValue((previousDuration + timerPeriod / milisecondsInSecond).seconds);
+                val previousDuration = _runDuration.value?.inSeconds ?: 0.toDouble();
+                _runDuration.postValue((previousDuration + timerPeriod / milisecondsInSecond).seconds);
         }
     }
 
@@ -113,6 +124,7 @@ class RunningViewModel : ViewModel() {
     fun endRun() {
         _state.postValue(RunViewModelState.InActive);
         _timer?.cancel();
+        _runDuration.postValue(ZERO)
         saveUserRun();
         cleanRunBreakouts();
     }
