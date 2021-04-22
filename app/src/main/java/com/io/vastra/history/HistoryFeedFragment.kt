@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,18 +19,20 @@ import kotlin.time.seconds
 
 @ExperimentalTime
 class HistoryFeedFragment: Fragment() {
+    private lateinit var recyclerView: RecyclerView;
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_history_feed, container, false)
+        val view = inflater.inflate(R.layout.fragment_history_feed, container, false);
         configureRecyclerView(view);
         return view
     }
 
     private fun configureRecyclerView(historyFeedView: View) {
-        val recyclerView: RecyclerView = historyFeedView.findViewById(R.id.history_feed)
+        recyclerView = historyFeedView.findViewById(R.id.history_feed)
         recyclerView.layoutManager = LinearLayoutManager(context)
         val adapter = HistoryAdapter(arrayOf());
         recyclerView.adapter = adapter;
@@ -48,7 +51,15 @@ class HistoryFeedFragment: Fragment() {
             }.toTypedArray();
             adapter.dataSet = historyItems;
             adapter.notifyDataSetChanged();
+            showRecylerView()
         }
+    }
+
+    private fun showRecylerView() {
+        view?.findViewById<ProgressBar>(R.id.progress_bar)?.let{
+            it.visibility = View.GONE;
+        }
+        recyclerView.visibility = View.VISIBLE;
     }
 }
 

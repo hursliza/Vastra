@@ -14,17 +14,20 @@ data class RunBreakpoint(var point: RoutePoint? = null, var duration: Duration? 
 };
 
 @ExperimentalTime
-fun Collection<RunBreakpoint>.groupByKm() = this.fold(listOf(
-    RunBreakpoint.empty
-)) {
-        acc, runBreakpoint ->
-    val lastKmBreakpoint = acc.last();
-    if (lastKmBreakpoint.distance < METERS_IN_KILOMETR) {
-        lastKmBreakpoint.distance += runBreakpoint.distance;
-        runBreakpoint.duration?.let {
-            lastKmBreakpoint.duration = lastKmBreakpoint.duration ?: Duration.ZERO + it;
+fun List<RunBreakpoint>.groupByKm(): Collection<RunBreakpoint> {
+    val accumulated = mutableListOf(this[0]);
+    this.drop(1).forEach { item ->
+        val acc = RunBreakpoint(distance = 0).also {
+            val previousBreakpoint =  accumulated.last();
+            it.distance = item.distance + previousBreakpoint.distance
+            if (previousBreakpoint.duration == null) {
+                previousBreakpoint.duration = Duration.ZERO;
+            }
+            it.duration = (item.duration ?: Duration.ZERO) + previousBreakpoint.duration!!;
+
         }
-        return acc;
+        accumulated.add(acc);
     }
-    return acc + RunBreakpoint.empty;
+        val groupedByKilometer = accumulated.groupBy { it.distance / METERS_IN_KILOMETR }
+    return groupedByKilometer.values.map { it.last() };
 }

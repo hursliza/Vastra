@@ -6,13 +6,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/colorPrimary"
     >
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:foregroundGravity="center"
+        android:gravity="center"
+        android:paddingVertical="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/history_feed"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/history_item"
         app:layout_constraintBottom_toBottomOf="parent"
-        >
-    </androidx.recyclerview.widget.RecyclerView>
+        tools:layout_editor_absoluteX="-16dp"
+        tools:listitem="@layout/history_item"
+        android:visibility="gone"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
